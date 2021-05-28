@@ -223,18 +223,18 @@ func deleteBastion(log logr.Logger, osProviderClient *gophercloud.ProviderClient
 func reconcileNormal(ctx context.Context, log logr.Logger, client client.Client, patchHelper *patch.Helper, cluster *clusterv1.Cluster, openStackCluster *infrav1.OpenStackCluster) (ctrl.Result, error) {
 	log.Info("Reconciling Cluster")
 
+	osProviderClient, clientOpts, err := provider.NewClientFromCluster(ctx, client, openStackCluster)
+	if err != nil {
+		return reconcile.Result{}, err
+	}
+
 	// If the OpenStackCluster doesn't have our finalizer, add it.
 	controllerutil.AddFinalizer(openStackCluster, infrav1.ClusterFinalizer)
 	// Register the finalizer immediately to avoid orphaning OpenStack resources on delete
 	if err := patchHelper.Patch(ctx, openStackCluster); err != nil {
 		return reconcile.Result{}, err
 	}
-
-	osProviderClient, clientOpts, err := provider.NewClientFromCluster(ctx, client, openStackCluster)
-	if err != nil {
-		return reconcile.Result{}, err
-	}
-
+	
 	computeService, err := compute.NewService(osProviderClient, clientOpts, log)
 	if err != nil {
 		return reconcile.Result{}, err
