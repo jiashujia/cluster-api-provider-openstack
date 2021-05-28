@@ -55,6 +55,7 @@ RELEASE_NOTES := $(TOOLS_BIN_DIR)/release-notes
 
 PATH := $(abspath $(TOOLS_BIN_DIR)):$(PATH)
 DOCKER_CLI_EXPERIMENTAL=enabled
+COMPOSE_DOCKER_CLI_BUILD=1
 DOCKER_BUILDKIT=1
 
 # Release variables
